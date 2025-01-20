@@ -1,36 +1,160 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# UI Schema Builder
 
-## Getting Started
+A powerful Next.js-based framework for generating dynamic data tables and UI components using schema definitions. Built with TypeScript, Tailwind CSS, and shadcn/ui components.
 
-First, run the development server:
+> **NOTE:** This is a experimental project for LLM autocompletion and work in progress.
+
+## Features
+
+- **Schema-Driven Development**: Define your UI components using TypeScript schemas
+- **Type-Safe Tables**: Generate fully typed data tables with Zod validation
+- **Modern UI Components**: Built on top of shadcn/ui and Radix UI primitives
+- **Dark Mode Support**: Built-in dark mode with customizable themes
+- **Responsive Design**: Mobile-first approach using Tailwind CSS
+- **Advanced Table Features**:
+  - Sorting
+  - Filtering
+  - Pagination
+  - Custom cell renderers
+  - Action menus
+  - i18n support for headers
+
+## Quick Start
+
+### Prerequisites
+
+- Node.js 18+ 
+- Bun (recommended) or npm/yarn
+- Git
+
+### Installation
 
 ```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+# Clone the repository
+git clone <your-repo-url>
+cd ui-schema-builder
+
+# Install dependencies
+bun install
+
+# Start development server
+bun run dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+The application will be available at `http://localhost:3000`.
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+## Framework Architecture
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+### Schema Definition
 
-## Learn More
+Create table schemas in `src/schemas` directory:
 
-To learn more about Next.js, take a look at the following resources:
+```typescript
+// src/schemas/customers.ts
+export const customersTableConfig: TableSchema = {
+  columns: [
+    {
+      id: "name",
+      header: { i18n: true, key: "customers.name" },
+      accessorKey: "name",
+      enableSorting: true,
+    },
+    // ... more columns
+  ],
+  filtering: {
+    enabled: true,
+    fields: ["name", "email", "status"],
+  },
+  sorting: {
+    enabled: true,
+    fields: ["name", "status"],
+  },
+  pagination: {
+    enabled: true,
+    pageSize: 10,
+  },
+};
+```
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+### Page Configuration
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+Define page configurations to automatically generate routes:
 
-## Deploy on Vercel
+```typescript
+export const customersPageConfig = {
+  path: "/customers",
+  title: "Customers",
+  component: {
+    type: "DataTable",
+    config: customersTableConfig,
+    data: {
+      source: "customers",
+      type: "Customer",
+      query: {
+        limit: 10,
+        offset: 0,
+      },
+    },
+  },
+};
+```
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+### Data Sources
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+Implement data sources in `src/core/data-service.ts`:
+
+```typescript
+interface DataSource<T> {
+  getData(query?: Record<string, any>): Promise<T[]>;
+}
+
+// Register your data sources
+dataService.registerSource('customers', {
+  getData: async () => {
+    // Implement your data fetching logic
+  }
+});
+```
+
+## Development Workflow
+
+1. **Define Schema**: Create a new schema file in `src/schemas`
+2. **Configure Page**: Add page configuration with routing and component settings
+3. **Register Data Source**: Implement and register a data source
+4. **Run Generator**: The framework automatically generates pages on `bun run dev`
+
+## Configuration
+
+### Tailwind CSS
+
+The framework uses Tailwind CSS for styling. Customize the theme in:
+- `tailwind.config.ts`: Core Tailwind configuration
+- `src/lib/theme.ts`: Theme variables and dark mode settings
+- `src/app/globals.css`: Global styles and CSS variables
+
+### Components
+
+Custom components are registered in `src/core/components.ts`. Each component can define:
+- Properties schema
+- Dependencies
+- Variants
+- Behaviors
+
+## Available Scripts
+
+- `bun run dev`: Start development server with hot reload
+- `bun run build`: Build for production
+- `bun run start`: Start production server
+- `bun run generate`: Generate pages from schemas manually
+
+## Contributing
+
+1. Fork the repository
+2. Create your feature branch
+3. Commit your changes
+4. Push to the branch
+5. Create a Pull Request
+
+## License
+
+MIT License - feel free to use this project for your own purposes.

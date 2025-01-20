@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { Inter } from "next/font/google";
 import "./globals.css";
 import { themeConfig } from "@/lib/theme";
+import { cn } from "@/lib/utils";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -16,8 +17,12 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   return (
-    <html lang="en" className={themeConfig.darkMode ? "dark" : ""}>
-      <body className={inter.className}>{children}</body>
+    <html lang="en" className={cn(themeConfig.darkMode ? "dark" : "", inter.className)}>
+      <body className="min-h-screen bg-background font-sans antialiased">
+        <div className="relative flex min-h-screen flex-col">
+          {children}
+        </div>
+      </body>
     </html>
   );
 }

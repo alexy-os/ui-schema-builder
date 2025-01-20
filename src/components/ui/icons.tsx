@@ -7,11 +7,13 @@ import {
   Plus,
   X,
   Check,
+  Users,
+  Github,
   LucideProps,
-  type Icon as LucideIcon,
+  LucideIcon,
 } from 'lucide-react';
 
-export type Icon = typeof LucideIcon;
+export type Icon = LucideIcon;
 
 export const Icons = {
   pencil: Pencil,
@@ -22,4 +24,6 @@ export const Icons = {
   plus: Plus,
   x: X,
   check: Check,
+  users: Users,
+  github: Github,
 } as const; 
